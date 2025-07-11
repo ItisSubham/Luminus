@@ -41,7 +41,7 @@ Luminus is a revolutionary AI-powered health assistant that transforms how you m
 
 ## 🌐 Live Demo
 
-🔗 **[Try Luminus Live](https://luminus-subham.vercel.app)**
+🔗 **[Try Luminus Live](https://luminus-ai-subham.vercel.app)**
 
 
 ## 💻 Tech Stack
