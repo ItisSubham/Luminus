@@ -1,0 +1,8 @@
+<svg width="400" height="400" viewBox="0 0 400 400" fill="none" xmlns="http://www.w3.org/2000/svg">
+<circle cx="200" cy="200" r="200" fill="#16a34a"/>
+<!-- Health Icon with Heart -->
+<g transform="translate(200, 200)">
+  <!-- Larger Heart Shape -->
+  <path d="M0 -45 C-35 -80, -90 -80, -90 -30 C-90 15, 0 75, 0 75 C0 75, 90 15, 90 -30 C90 -80, 35 -80, 0 -45 Z" fill="white" opacity="0.95"/>
+</g>
+</svg>
