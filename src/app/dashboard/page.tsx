@@ -56,7 +56,7 @@ const DashboardPage = async () => {
             {dbUser?.firstName} {dbUser?.lastName}
             {(!dbUser?.firstName || dbUser?.firstName === "User") && (
               <span className="text-xs text-muted-foreground ml-2">
-                (Name needs sync)
+                (Please Update Your Name)
               </span>
             )}
           </h4>
