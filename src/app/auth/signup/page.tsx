@@ -83,6 +83,19 @@ const SignUpPage = () => {
       return;
     }
 
+    // Validate email format
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      toast.error("Please enter a valid email address");
+      return;
+    }
+
+    // Validate password length
+    if (password.length < 8) {
+      toast.error("Password must be at least 8 characters long");
+      return;
+    }
+
     setIsLoading(true);
 
     try {
@@ -93,21 +106,15 @@ const SignUpPage = () => {
       console.log("SIGNUP: signUp object:", signUp);
       console.log("SIGNUP: isLoaded:", isLoaded);
 
-      // Always include names in signup to ensure they're set in Clerk
-      console.log("SIGNUP: Creating signup with names");
-      const signUpParams = {
+      // Only pass email and password to signUp.create
+      console.log("SIGNUP: Creating signup with email and password only");
+      const signUpResult = await signUp.create({
         emailAddress: email,
         password,
-        firstName: name.split(" ")[0] || "User",
-        lastName: name.split(" ")[1] || "",
-      };
-
-      console.log("SIGNUP: Parameters:", signUpParams);
-      console.log("SIGNUP: firstName:", signUpParams.firstName);
-      console.log("SIGNUP: lastName:", signUpParams.lastName);
-
-      const signUpResult = await signUp.create(signUpParams);
+      });
       console.log("SIGNUP: Create result:", signUpResult);
+
+      // Clerk no longer allows setting firstName or lastName at signup. Skipping name update.
 
       console.log(
         "SIGNUP: User created successfully, preparing email verification"
@@ -130,6 +137,18 @@ const SignUpPage = () => {
       console.log("SIGNUP: Error status:", error.status);
       console.log("SIGNUP: Error code:", error.code);
       console.log("SIGNUP: Error errors array:", error.errors);
+
+      // More detailed error logging
+      if (error.errors && error.errors.length > 0) {
+        error.errors.forEach((err: any, index: number) => {
+          console.log(`SIGNUP: Error ${index}:`, {
+            code: err.code,
+            message: err.message,
+            longMessage: err.longMessage,
+            meta: err.meta,
+          });
+        });
+      }
 
       // Check if error.errors exists and has elements
       if (error.errors && error.errors.length > 0) {
@@ -155,19 +174,30 @@ const SignUpPage = () => {
               "Password is too short. Please choose a longer password."
             );
             break;
-          default:
-            console.log("SIGNUP: Unknown error code:", error.errors[0].code);
+          case "form_password_validation":
             toast.error(
-              `Signup failed: ${
-                error.errors[0].message || "An error occurred. Please try again"
-              }`
+              "Password doesn't meet requirements. Please choose a stronger password."
             );
             break;
+          case "form_param_nil":
+            toast.error("Please fill in all required fields.");
+            break;
+          default:
+            console.log("SIGNUP: Unknown error code:", error.errors[0].code);
+            const errorMessage =
+              error.errors[0].message ||
+              error.errors[0].longMessage ||
+              "An error occurred. Please try again";
+            toast.error(`Signup failed: ${errorMessage}`);
+            break;
         }
+      } else if (error.message) {
+        console.log("SIGNUP: Using error.message");
+        toast.error(`Signup failed: ${error.message}`);
       } else {
-        console.log("SIGNUP: No errors array, using general error message");
+        console.log("SIGNUP: No specific error message found");
         toast.error(
-          `An error occurred: ${error.message || "Please try again"}`
+          "Signup failed: An unknown error occurred. Please try again."
         );
       }
     } finally {
